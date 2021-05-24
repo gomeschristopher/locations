@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from './auth/auth.service';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -7,12 +9,13 @@ import { Component } from '@angular/core';
 export class AppComponent {
   public appPages = [
     { title: 'Hoteis', url: '/places/discover', icon: 'business' },
-    { title: 'Reservas', url: '/bookings', icon: 'checkbox' },
-    { title: 'Sair', url: '/auth', icon: 'exit' },
-    /*
-      { title: 'Archived', url: '/folder/Archived', icon: 'archive' },
-      { title: 'Trash', url: '/folder/Trash', icon: 'trash' },
-      */
+    { title: 'Reservas', url: '/bookings', icon: 'checkbox' }
   ];
-  constructor() { }
+  constructor(private authService: AuthService,
+    private router: Router) { }
+
+  onLogout() {
+    this.authService.logout();
+    this.router.navigateByUrl('/auth');
+  }
 }
