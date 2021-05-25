@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ActionSheetController, LoadingController, ModalController, NavController } from '@ionic/angular';
+import { ActionSheetController, AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { BookingService } from 'src/app/bookings/booking.service';
@@ -16,6 +16,7 @@ import { PlacesService } from '../../places.service';
 export class PlaceDetailPage implements OnInit, OnDestroy {
   place: Place;
   isBoolable: boolean = false;
+  isLoading: boolean;
   private placeSub: Subscription;
 
   constructor(private router: Router,
@@ -26,7 +27,8 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     private actionSheetCtrl: ActionSheetController,
     private bookingService: BookingService,
     private loadingCtrl: LoadingController,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private alertCtrl: AlertController) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
@@ -34,11 +36,26 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         this.navCtrl.navigateBack('/places/offers');
         return;
       }
+      this.isLoading = true;
       this.placeSub = this.placesService
       .getPlace(paramMap.get('placeId'))
       .subscribe(place => {
         this.place = place;
         this.isBoolable = place.userId !== this.authService.userId;
+        this.isLoading = false;
+      }, err => {
+        this.alertCtrl.create({
+          header: 'Houve um erro',
+          message: 'Não foi possivel encontrar o local',
+          buttons: [{
+            text: 'OK',
+            handler: () => {
+              this.router.navigate(['/places/discover']);
+            }
+          }]
+        }).then(alertEl => {
+          alertEl.present();
+        })
       });
     });
   }

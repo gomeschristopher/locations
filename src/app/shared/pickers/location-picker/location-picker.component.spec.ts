@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { OfferBookingsPage } from './offer-bookings.page';
+import { LocationPickerComponent } from './location-picker.component';
 
-describe('OfferBookingsPage', () => {
-  let component: OfferBookingsPage;
-  let fixture: ComponentFixture<OfferBookingsPage>;
+describe('LocationPickerComponent', () => {
+  let component: LocationPickerComponent;
+  let fixture: ComponentFixture<LocationPickerComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ OfferBookingsPage ],
+      declarations: [ LocationPickerComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(OfferBookingsPage);
+    fixture = TestBed.createComponent(LocationPickerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

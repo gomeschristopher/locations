@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoadingController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Place } from '../../place.model';
 import { PlacesService } from '../../places.service';
@@ -15,13 +15,16 @@ export class EditOfferPage implements OnInit, OnDestroy {
   place: Place;
   form: FormGroup;
   private placeSub: Subscription;
+  isLoading: boolean;
+  placeId: string;
 
   constructor(
     private route: ActivatedRoute,
     private placeService: PlacesService,
     private navCtrl: NavController,
     private router: Router,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
   ) { }
 
   ngOnInit() {
@@ -30,7 +33,9 @@ export class EditOfferPage implements OnInit, OnDestroy {
         this.navCtrl.navigateBack('/places/offers');
         return;
       }
-      this.placeSub = this.placeService.getPlace(paramMap.get('placeId'))
+      this.placeId = paramMap.get('placeId');
+      this.isLoading = true;
+      this.placeSub = this.placeService.getPlace(this.placeId)
         .subscribe(place => {
           this.place = place;
           this.form = new FormGroup({
@@ -42,6 +47,20 @@ export class EditOfferPage implements OnInit, OnDestroy {
               updateOn: 'blur',
               validators: [Validators.required, Validators.maxLength(180)]
             }),
+          });
+          this.isLoading = false;
+        }, error => {
+          this.alertCtrl.create({
+            header: 'Houve um erro',
+            message: 'Não foi possivel encontrar o lugar',
+            buttons: [{
+              text: 'Ok', 
+              handler: () => {
+                this.router.navigate(['/places/offers']);
+              }
+            }]
+          }).then(alertEl => {
+            alertEl.present();
           });
         });
     });
