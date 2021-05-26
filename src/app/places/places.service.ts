@@ -5,6 +5,7 @@ import { take, map, tap, delay, switchMap } from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
 import { Place } from './place.model';
+import { PlaceLocation } from './location.model';
 
 interface PlaceData {
   availableFrom: string;
@@ -14,6 +15,7 @@ interface PlaceData {
   price: number;
   title: string;
   userId: string;
+  location: PlaceLocation;
 }
 
 @Injectable({
@@ -41,7 +43,7 @@ export class PlacesService {
               resData[key].description, resData[key].imageUrl,
               resData[key].price, new Date(resData[key].availableFrom),
               new Date(resData[key].availableTo),
-              resData[key].userId));
+              resData[key].userId, resData[key].location));
           }
         }
         return places;
@@ -54,15 +56,16 @@ export class PlacesService {
     return this.http.get<PlaceData>(`https://christopher-places-default-rtdb.firebaseio.com/offered-places/${id}.json`)
       .pipe(map(placeData => {
         return new Place(id, placeData.title, placeData.description, placeData.imageUrl, placeData.price,
-          new Date(placeData.availableFrom), new Date(placeData.availableTo), placeData.userId);
+          new Date(placeData.availableFrom), new Date(placeData.availableTo), placeData.userId, placeData.location);
       }));
   }
 
-  addPlace(title: string, description: string, price: number, dateFrom: Date, dateTo: Date) {
+  addPlace(title: string, description: string, price: number,
+    dateFrom: Date, dateTo: Date, location: PlaceLocation) {
     let generatedId: string;
     const newPlace = new Place(Math.random().toString(), title, description,
       'https://i.pinimg.com/originals/d4/7d/73/d47d733da5552601eb5dbcfab047015a.jpg',
-      price, dateFrom, dateTo, this.authService.userId);
+      price, dateFrom, dateTo, this.authService.userId, location);
     return this.http.post<{
       name: string
     }>('https://christopher-places-default-rtdb.firebaseio.com/offered-places.json', {
@@ -102,7 +105,8 @@ export class PlacesService {
           oldPlace.price,
           oldPlace.availableFrom,
           oldPlace.availableTo,
-          oldPlace.userId
+          oldPlace.userId,
+          oldPlace.location
         );
         return this.http.put(
           `https://christopher-places-default-rtdb.firebaseio.com/offered-places/${placeId}.json`,

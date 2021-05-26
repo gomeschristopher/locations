@@ -10,21 +10,18 @@
   <div *ngIf="isLoading" class="ion-text-center">
     <ion-spinner color="primary"></ion-spinner>
   </div>
-  <ion-grid class="ion-no-padding" *ngIf="!isLoading">
-    <ion-row>
-      <ion-col sizeSm="6" offsetSm="3" class="ion-no-padding">
-        <ion-img [src]="place.imageUrl"></ion-img>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="ion-text-center" sizeSm="6" offsetSm="3">
-        {{ place.description }}
-      </ion-col>
-    </ion-row>
-    <ion-row *ngIf="isBoolable">
-      <ion-col sizeSm="6" offsetSm="3">
-        <ion-button color="primary" margin (click)="onBookPlace()">Reservar</ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <ion-card *ngIf="!isLoading">
+    <ion-img [src]="place.imageUrl"></ion-img>
+    <ion-card-header>
+      <ion-card-title>{{ place.title }}</ion-card-title>
+      <ion-card-title>{{ place.description }}</ion-card-title>
+      <br>
+      <div class="ion-text-center">
+        <ion-button expand="block" color="primary" margin (click)="onBookPlace()">Reservar</ion-button>
+      </div>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-img role="button" (click)="onShowFullMap()" class="location-image" [src]="place.location.staticMapImageUrl"></ion-img>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

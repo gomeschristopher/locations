@@ -34,9 +34,11 @@
             <ion-card-subtitle>{{ relevantPlaces[0].price | currency }} / Noite</ion-card-subtitle>
           </ion-card-header>
           <ion-img [src]="relevantPlaces[0].imageUrl"></ion-img>
+          <!--
           <ion-card-content>
             <p>{{ relevantPlaces[0].description }}</p>
           </ion-card-content>
+          -->
         </ion-card>
       </ion-col>
     </ion-row>
@@ -50,7 +52,7 @@
             <ion-label>
               <h2>{{ place.title }}</h2>
               <p>
-                <ion-text color="danger">{{ place.description }}</ion-text>
+                <ion-text>{{ place.description }}</ion-text>
               </p>
             </ion-label>
           </ion-item>
