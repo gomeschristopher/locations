@@ -60,11 +60,21 @@ export class PlacesService {
       }));
   }
 
+  uploadImage(image: File)  {
+    const uploadData = new FormData();
+    uploadData.append('image', image);
+    return this.http.post<{
+      imageUrl: string,
+      imagePath: string
+    }>('https://us-central1-christopher-places.cloudfunctions.net/storeImage',
+    uploadData);
+  }
+
   addPlace(title: string, description: string, price: number,
-    dateFrom: Date, dateTo: Date, location: PlaceLocation) {
+    dateFrom: Date, dateTo: Date, location: PlaceLocation, imageUrl: string) {
     let generatedId: string;
     const newPlace = new Place(Math.random().toString(), title, description,
-      'https://i.pinimg.com/originals/d4/7d/73/d47d733da5552601eb5dbcfab047015a.jpg',
+      imageUrl,
       price, dateFrom, dateTo, this.authService.userId, location);
     return this.http.post<{
       name: string
