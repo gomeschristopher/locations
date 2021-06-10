@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.christophergomes.lugares;
 
 import android.os.Bundle;
 

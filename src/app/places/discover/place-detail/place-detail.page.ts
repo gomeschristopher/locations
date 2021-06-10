@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { BookingService } from 'src/app/bookings/booking.service';
 import { CreateBookingComponent } from 'src/app/bookings/create-booking/create-booking.component';
@@ -34,30 +35,39 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
       if (!paramMap.has('placeId')) {
-        this.navCtrl.navigateBack('/places/offers');
+        this.navCtrl.navigateBack('/places/discover');
         return;
       }
       this.isLoading = true;
-      this.placeSub = this.placesService
-      .getPlace(paramMap.get('placeId'))
-      .subscribe(place => {
-        this.place = place;
-        this.isBoolable = place.userId !== this.authService.userId;
-        this.isLoading = false;
-      }, err => {
-        this.alertCtrl.create({
-          header: 'Houve um erro',
-          message: 'Não foi possivel encontrar o local',
-          buttons: [{
-            text: 'OK',
-            handler: () => {
-              this.router.navigate(['/places/discover']);
+      let fetchedUserId: string;
+      return this.authService.userId
+        .pipe(
+          take(1),
+          switchMap(userId => {
+            if (!userId) {
+              throw new Error('Usuário não encontrado');
             }
-          }]
-        }).then(alertEl => {
-          alertEl.present();
-        })
-      });
+            fetchedUserId = userId;
+            return this.placesService
+              .getPlace(paramMap.get('placeId'));
+          })).subscribe(place => {
+            this.place = place;
+            this.isBoolable = place.userId !== fetchedUserId;
+            this.isLoading = false;
+          }, err => {
+            this.alertCtrl.create({
+              header: 'Houve um erro',
+              message: 'Não foi possivel encontrar o local',
+              buttons: [{
+                text: 'OK',
+                handler: () => {
+                  this.router.navigate(['/places/discover']);
+                }
+              }]
+            }).then(alertEl => {
+              alertEl.present();
+            })
+          });
     });
   }
 
@@ -126,7 +136,8 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
           const data = resultData.data.bookingData;
           this.bookingService.addBooking(this.place.id, this.place.title,
             this.place.imageUrl, data.firstName, data.lastName, data.guestNumber,
-            data.startDate, data.endDate).subscribe(() => {
+            data.startDate, data.endDate)
+            .subscribe(() => {
               loadingEl.dismiss();
             });
         })

@@ -12,16 +12,15 @@
           <ion-list>
             <ion-item>
               <ion-label position="floating">E-mail</ion-label>
-              <ion-input type="email" ngModel name="email"
-              required email #emailCtrl="ngModel"></ion-input>
+              <ion-input type="email" ngModel name="email" required email #emailCtrl="ngModel"></ion-input>
             </ion-item>
             <ion-item *ngIf="!emailCtrl.valid && emailCtrl.touched" lines="none">
               Deve ser um endereço de email válido
             </ion-item>
             <ion-item>
               <ion-label position="floating">Senha</ion-label>
-              <ion-input type="password" ngModel name="password"
-              required minlength="6" #passwordCtrl="ngModel"></ion-input>
+              <ion-input type="password" ngModel name="password" required minlength="6" #passwordCtrl="ngModel">
+              </ion-input>
             </ion-item>
             <ion-item *ngIf="!passwordCtrl.valid && passwordCtrl.touched" lines="none">
               Deve ter 6 caracteres ou mais
@@ -31,11 +30,10 @@
       </ion-row>
       <ion-row>
         <ion-col sizeSm="6" offsetSm="3">
-          <ion-button type="button" expand="block"
-          fill="clear" (click)="onSwitchAuthMode()">
-        {{ isLogin ? 'Cadastrar' : 'Entrar' }}</ion-button>
-          <ion-button type="submit" color="primary"
-          expand="block" [disabled]="!f.valid">{{ !isLogin ? 'Cadastrar' : 'Entrar' }}</ion-button>
+          <ion-button type="button" expand="block" fill="clear" (click)="onSwitchAuthMode()">
+            {{ isLogin ? 'Cadastrar' : 'Entrar' }}</ion-button>
+          <ion-button type="submit" color="primary" expand="block" [disabled]="!f.valid">{{ !isLogin ? 'Cadastrar' :
+            'Entrar' }}</ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
